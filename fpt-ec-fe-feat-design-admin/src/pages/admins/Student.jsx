@@ -2,6 +2,7 @@ import { Container, Typography, Button, Stack } from "@mui/material";
 import Iconify from "../../components/iconify";
 import * as XLSX from "xlsx";
 import React, { useState } from "react";
+import ScrollableTab from "./Tabs";
 
 // const theme = createTheme({
 //     palette: {
@@ -41,6 +42,7 @@ export default function Student() {
 
     return (
         <div>
+            <ScrollableTab/>
             <Container>
                 <Stack
                     direction="row"
