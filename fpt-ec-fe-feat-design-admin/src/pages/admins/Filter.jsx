@@ -21,7 +21,9 @@ function Filter(props) {
     const [age, setAge] = useState('');
     const [valueTo, setValueTo] = useState(null);
     const [valueFrom, setValueFrom] = useState(null);
-
+  const onKeyDown = (e) => {
+    e.preventDefault();
+ };
 
     const handleChange = (event) => {
       setAge(event.target.value);
@@ -58,7 +60,9 @@ function Filter(props) {
         onChange={(newValueFrom) => {
           setValueFrom(newValueFrom);
         }}
-        renderInput={(params) => <TextField size="small" {...params} sx={{backgroundColor: "white"}} />}
+        renderInput={(params) => <TextField 
+          id="outlined-read-only-input"
+          onKeyDown={onKeyDown}  size="small" {...params} sx={{backgroundColor: "white"}} />}
       />
     </LocalizationProvider>
     <LocalizationProvider size="small" dateAdapter={AdapterMoment}>
@@ -68,7 +72,7 @@ function Filter(props) {
         onChange={(newValueTo) => {
           setValueTo(newValueTo);
         }}
-        renderInput={(params) => <TextField  size="small" {...params}  sx={{backgroundColor: "white"}}/>}
+        renderInput={(params) => <TextField onKeyDown={onKeyDown}  size="small" {...params}  sx={{backgroundColor: "white"}}/>}
       />
     </LocalizationProvider>
     <TextField
