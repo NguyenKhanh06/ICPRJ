@@ -60,19 +60,13 @@ export default function AccountPopover() {
             <IconButton
                 onClick={handleOpen}
                 sx={{
-                    p: 0,
-                    ...(open && {
-                        "&:before": {
-                            zIndex: 1,
-                            content: "''",
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "50%",
-                            position: "absolute",
-                            bgcolor: (theme) =>
-                                alpha(theme.palette.grey[900], 0.8),
+                
+                    
+                        "&:hover": {
+                           backgroundColor: "rgba(0, 0 , 0, 0.2)",
+                           borderRadius: " 15px"
                         },
-                    }),
+                    
                 }}
             >
                 <Avatar src={user?.photoURL} alt="photoURL" />
@@ -109,7 +103,7 @@ export default function AccountPopover() {
                         sx={{ color: "text.secondary" }}
                         noWrap
                     >
-                        {account.email}
+                        {user?.email}
                     </Typography>
                 </Box>
 
@@ -125,7 +119,7 @@ export default function AccountPopover() {
 
                 <Divider sx={{ borderStyle: "dashed" }} />
 
-                <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+                <MenuItem onClick={() => handleSignOut()} sx={{ m: 1 }}>
                     Logout
                 </MenuItem>
             </Popover>

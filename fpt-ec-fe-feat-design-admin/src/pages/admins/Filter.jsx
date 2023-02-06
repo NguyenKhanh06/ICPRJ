@@ -48,9 +48,8 @@ function Filter(props) {
           <MenuItem value="">
             <em>None</em>
           </MenuItem>
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
+          <MenuItem value={10}>Active</MenuItem>
+          <MenuItem value={20}>Deactivate</MenuItem>
         </Select>
       </FormControl>
       <LocalizationProvider size="small" dateAdapter={AdapterMoment}>
