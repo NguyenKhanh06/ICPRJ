@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
+  Autocomplete,
   Box,
   Button,
   Dialog,
@@ -15,7 +16,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { StyledTextField } from "../../../styles/textfield";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -24,10 +25,15 @@ import { ColorButton } from "../../../styles/button";
 import AddIcon from "@mui/icons-material/Add";
 import ScrollableTab from "../Tabs";
 import BasicTabs from "../Tabs";
+import projectAPI from "../../../api/projectAPI";
+import staffAPI from "../../../api/staffAPI";
+import partnerAPI from "../../../api/partnerAPI";
+import courseAPI from "../../../api/courseAPI";
 
 DetailProject.propTypes = {};
 
 function DetailProject(props) {
+  const projectID = useParams();
   const [editName, setEditName] = useState("");
   const [editEstimate_start, setEditEstimate_start] = useState(null);
   const [editEstimate_end, setEditEstimate_end] = useState(null);
@@ -39,9 +45,13 @@ function DetailProject(props) {
   const [editPartner, setEditPartner] = useState("");
   const [editLeader, setEditLeader] = useState("");
   const [editDescription, setEditDescription] = useState("");
-  const [editStatus, setEditStatus] = useState("");
+  const [editStatus, setEditStatus] = useState(0);
   const [open, setOpen] = useState(false);
   const [itemCancel, setItemCancel] = useState(null);
+  const [project, setProject] = useState({});
+  const [staffs, setStaffs] = useState([]);
+  const [partners, setPartners] = useState([]);
+  const [courses, setCourses] = useState([]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -56,25 +66,80 @@ function DetailProject(props) {
   };
 
   const handleUpdate = (e) => {
-    console.log(itemCancel);
+    console.log("onchange leader", editLeader)
+
   };
 
-  //  useEffect(() => {
-  //     if (subitem != null) {
-  //         setEditName()
-  //         setEditEstimate_start()
-  //         setEditEstimate_end()
-  //         setEditRegis_open()
-  //         setEditRegis_close()
-  //         setOfficial_start()
-  //         setOfficial_end()
-  //          setEditCourse()
-  //         setEditPartner()
-  //         setEditLeader()
-  //         setEditDescription()
-  //     }
-  //   }, [subitem]);
+//fetch data project
+  const fetchData = async () => {
+    await projectAPI.getProjectDetail(projectID.id).then((response) => {
+        setProject(response.responseSuccess
+        )
+      console.log(response.responseSuccess
+        )
+    });
+  };
 
+  useEffect(() => {
+    fetchData().catch((error) => {
+      console.log(error);
+    });
+  }, []);
+
+
+// fetch data staff
+  const fetchDataStaff = async () => {
+    await staffAPI.getList().then((response) => {
+      setStaffs(response.responseSuccess)
+    });
+  };
+  useEffect(() => {
+    fetchDataStaff().catch((error) => {
+      console.log(error);
+    });
+  }, []);
+
+  // fetch data partner
+  const fetchDataPartner = async () => {
+    await partnerAPI.getList().then((response) => {
+      setPartners(response.responseSuccess)
+    });
+  };
+  useEffect(() => {
+    fetchDataPartner().catch((error) => {
+      console.log(error);
+    });
+  }, []);
+
+  // fetch data partner
+  const fetchDataCourse = async () => {
+    await courseAPI.getList().then((response) => {
+      setCourses(response.responseSuccess)
+    });
+  };
+  useEffect(() => {
+    fetchDataCourse().catch((error) => {
+      console.log(error);
+    });
+  }, []);
+
+   useEffect(() => {
+      if (project != null) {
+          setEditName(project.projectName)
+          setEditEstimate_start(project.estimateTimeStart)
+          setEditEstimate_end(project.estimateTimeEnd)
+          setEditRegis_open(project.estimateTimeStart)
+          setEditRegis_close(project.estimateTimeEnd)
+          setOfficial_start(project.officalTimeStart)
+          setOfficial_end(project.officalTimeEnd)
+           setEditCourse(project.course?.id)
+          setEditPartner(project?.partner?.id)          
+          setEditLeader(project?.leader?.staff?.id)
+          setEditDescription(project.description)
+      }
+    }, [project]);
+    // console.log("project.leader.staff.fullname", project.leader.staff.fullname)
+    // console.log("project", project.status)
   const handleOnChangeName = (event) => {
     setEditName(event.target.value);
   };
@@ -96,7 +161,6 @@ function DetailProject(props) {
   const handleOnChangeFile = (event) => {
     setItemCancel(event.target.files[0]);
   };
-
   return (
     <>
       
@@ -447,19 +511,19 @@ function DetailProject(props) {
                 Course
               </Typography>
               <FormControl fullWidth>
-                <Select
-                  size="small"
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={editCourse}
-                  name="course"
-                  onChange={handleOnChangeCourse}
-                  sx={{ backgroundColor: "white" }}
-                >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
+              <Select
+                    size="small"
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={editCourse}
+                    name="course"
+                    onChange={handleOnChangeCourse}
+                    sx={{ backgroundColor: "white" }}
+                  >
+                   { courses.map((course, index) => (
+                    <MenuItem key={index} value={course.id}>{course.activity}</MenuItem>
+                   ))}
+                  </Select>
               </FormControl>
               <Stack
                 sx={{
@@ -516,10 +580,11 @@ function DetailProject(props) {
                     onChange={handleOnChangeLeader}
                     sx={{ backgroundColor: "white" }}
                   >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                   { staffs.map((staff, index) => (
+                    <MenuItem key={index} value={staff.id}>{staff.fullName}</MenuItem>
+                   ))}
                   </Select>
+                 
                 </FormControl>
               </Box>
               <Box
@@ -540,18 +605,18 @@ function DetailProject(props) {
                   Partner
                 </Typography>
                 <FormControl fullWidth>
-                  <Select
+                <Select
                     size="small"
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={editPartner}
-                    name="partner"
+                    name="leader"
                     onChange={handleOnChangePartner}
                     sx={{ backgroundColor: "white" }}
                   >
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
+                   { partners.map((partner, index) => (
+                    <MenuItem key={index} value={partner.id}>{partner.name}</MenuItem>
+                   ))}
                   </Select>
                 </FormControl>
               </Box>
@@ -609,9 +674,13 @@ function DetailProject(props) {
                   onChange={handleOnChangeStatus}
                   sx={{ backgroundColor: "white" }}
                 >
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  <MenuItem value={0}>New</MenuItem>
+                  <MenuItem value={1}>Start</MenuItem>
+                  <MenuItem value={2}>Process</MenuItem>
+                  <MenuItem value={3}>Pending</MenuItem>
+                  <MenuItem value={4}>Finish</MenuItem>
+                  <MenuItem value={5}>Approve</MenuItem>
+                  <MenuItem value={6}>Reject</MenuItem>
                 </Select>
               </FormControl>
             </Box>

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://esmpfree-001-site1.etempurl.com/api/'
+axios.defaults.baseURL = 'https://localhost:7115/api/v1/'
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*'
 axios.defaults.headers.delete['Access-Control-Allow-Origin'] = '*'

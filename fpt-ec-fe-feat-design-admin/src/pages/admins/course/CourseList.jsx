@@ -8,25 +8,21 @@ import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { ColorButton } from '../../../styles/button';
 import { Link } from 'react-router-dom';
-import projectAPI from '../../../api/projectAPI';
-import moment from 'moment';
-import BasicTabs from '../Tabs';
+import courseAPI from '../../../api/courseAPI';
 
-ProjectList.propTypes = {
+CourseList.propTypes = {
     
 };
 
-
-function ProjectList(props) {
+function CourseList(props) {
+    const [courses, setCourses] = useState([])
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(15);
-    const [projects, setProjects] = useState([]);
     const fetchData = async () => {
-      await projectAPI.getList().then((response) => {
-        setProjects(response.responseSuccess
+      await courseAPI.getList().then((response) => {
+        setCourses(response.responseSuccess
           )
-        console.log(response.responseSuccess
-          )
+        console.log(response.responseSuccess)
       });
     };
   
@@ -46,7 +42,6 @@ function ProjectList(props) {
       };
     return (
         <>
-
         <Stack
           sx={{ marginTop: 1 }}
           justifyContent="space-around"
@@ -70,15 +65,15 @@ function ProjectList(props) {
               Back
             </Button> */}
             <Typography variant="h5" component="h2" gutterBottom>
-              List project
+              List Course
             </Typography>
           </Stack>
-          <Link to="/admin/create-project">
+          <Link to="/admin/create-course">
           <ColorButton
             endIcon={<AddIcon />}
             variant="contained"
           >
-            Create project
+            Create Course
           </ColorButton>
           </Link>
   
@@ -91,29 +86,23 @@ function ProjectList(props) {
               <TableRow hover>
                 <TableCell sx={{ fontWeight: 700 }}>No</TableCell>
                 <TableCell sx={{ fontWeight: 700 }} align="left">
-                  Project's name
+                  Course's name
                 </TableCell>
                 <TableCell sx={{ fontWeight: 700 }} align="left">
-                  Start date < ArrowUpwardIcon sx={{width: 20}}/>
-                </TableCell>
-                <TableCell sx={{ fontWeight: 700 }} align="left">
-                  End date < ArrowUpwardIcon sx={{width: 20}}/>
-                </TableCell>
-                <TableCell sx={{ fontWeight: 700 }} align="left">
-                  Course
-                </TableCell>
-                <TableCell sx={{ fontWeight: 700 }} align="left">
-                  Leader
+                  Time Distribution
                 </TableCell>
                 <TableCell sx={{ fontWeight: 700 }} align="left">
                  Status
                 </TableCell>
+                <TableCell sx={{ fontWeight: 700 }} align="left">
+                  Action
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {projects
+              {courses
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((project, index) => (
+                .map((course, index) => (
                   <TableRow
                     hover
                     key={index}
@@ -122,32 +111,32 @@ function ProjectList(props) {
                     <TableCell align="left">{index + 1}</TableCell>
   
                     <TableCell component="th" scope="row">
-                    <Link to={`/admin/detail-project/${project.id}`}>
+                    <Link to={`/admin/detail-course/${course.id}`}>
                     <Button
                     
                         sx={{ color: "black" }}
                         variant="text"
                       >
-                        {project.projectName}
+                        {course.skillName}
                       </Button>
           </Link>
                     </TableCell>
-                    <TableCell align="left">{moment(project.estimateTimeStart ).format("DD/MM/YYYY")}</TableCell>
-                    <TableCell align="left">{moment(project.estimateTimeEnd).format("DD/MM/YYYY")}</TableCell>
-                    <TableCell align="left">{project.course.skillName}</TableCell>
-                    <TableCell align="left">{project.leader.staff.fullName}</TableCell>
+                    <TableCell align="left">{course.activity}</TableCell>
                     <TableCell align="left">
-                      {project.status === 0 ? (
-                        <Chip label="New" color="warning" />
-                      ) : project.status === 1 ? (
-                        <Chip label="Process" color="primary" />
-                      ) : project.status === 2  ? (
-                        <Chip label="Review" color="secondary" />
-                      ) : (
-                        <Chip label="Done" color="success" />
-                      )}
+                      {course.status == true ? (
+                        <Chip label="Active" color="success" />
+                      ) : <Chip label="Deactivate" color="error" />}
                     </TableCell>
-            
+                    <TableCell align="left">
+                      {course.status == true ? (
+                        <Button variant="contained" disabled>
+                        Delete
+                      </Button>
+                       
+                      ) :   <Button variant="contained" color="error">
+                      Delete
+                    </Button>}
+                    </TableCell>
                   </TableRow>
                 ))}
             </TableBody>
@@ -156,7 +145,7 @@ function ProjectList(props) {
         <TablePagination
           rowsPerPageOptions={[]}
           component="div"
-          count={projects.length}
+          count={courses.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -167,4 +156,4 @@ function ProjectList(props) {
     );
 }
 
-export default ProjectList;
+export default CourseList;
